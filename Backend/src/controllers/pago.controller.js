@@ -1,12 +1,10 @@
 const PagoModel = require('../models/pago.model');
 
 const PagoController = {
-  // 1. Listar historial de pagos y total recaudado
   obtenerPagos: async (req, res) => {
     try {
       const pagos = await PagoModel.obtenerTodos();
 
-      // Calcular total recaudado
       const totalRecaudado = pagos.reduce((acc, p) => acc + Number(p.monto), 0);
 
       res.json({
@@ -24,7 +22,6 @@ const PagoController = {
     }
   },
 
-  // 2. Obtener detalle de un pago por ID
   obtenerPagoPorId: async (req, res) => {
     try {
       const { id } = req.params;

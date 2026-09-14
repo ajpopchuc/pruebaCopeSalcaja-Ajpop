@@ -1,7 +1,6 @@
 const TarifaModel = require('../models/tarifa.model');
 
 const TarifaController = {
-  // Obtener el catálogo de tarifas por tramos de tiempo
   obtenerTarifas: async (req, res) => {
     try {
       const tarifas = await TarifaModel.obtenerTodas();

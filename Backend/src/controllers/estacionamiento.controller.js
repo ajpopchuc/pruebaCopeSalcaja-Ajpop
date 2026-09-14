@@ -5,9 +5,6 @@ const SuscripcionModel = require('../models/suscripcion.model');
 const PagoModel = require('../models/pago.model');
 
 const EstacionamientoController = {
-  // ===========================================================================
-  // 1. REGISTRAR ENTRADA (Check-in con las 5 Validaciones)
-  // ===========================================================================
   registrarEntrada: async (req, res) => {
     try {
       const { placa, espacio_id, tipo_vehiculo_id = 1 } = req.body;
@@ -52,7 +49,7 @@ const EstacionamientoController = {
         });
       }
 
-      // VALIDACIÓN 4: Impedir uso de espacio ocupado o en mantenimiento
+      // VALIDACIÓN 4: Impedir uso de espacio ocupado 
       if (espacio.estado !== 'DISPONIBLE') {
         return res.status(400).json({
           status: 'error',
@@ -114,9 +111,7 @@ const EstacionamientoController = {
     }
   },
 
-  // ===========================================================================
-  // 2. REGISTRAR SALIDA (Check-out con Liquidación de Cobro y Liberación)
-  // ===========================================================================
+
   registrarSalida: async (req, res) => {
     try {
       const { registro_id, placa } = req.body;
@@ -128,7 +123,7 @@ const EstacionamientoController = {
         });
       }
 
-      // Buscar el ticket activo
+
       let registro = null;
       if (registro_id) {
         registro = await RegistroModel.obtenerPorId(registro_id);
@@ -153,7 +148,7 @@ const EstacionamientoController = {
       let detalleCobro = '';
       let saldoRestanteHoras = null;
 
-      // 2. Evaluar modalidad de cobro (Suscripción vs Rotativo)
+
       let esSuscriptor = false;
       let suscripcion = null;
 
@@ -214,13 +209,10 @@ const EstacionamientoController = {
         }
       }
 
-      // 3. Finalizar el registro en la base de datos
       await RegistroModel.registrarSalida(registro.id, montoTotal);
 
-      // 4. Liberar el espacio a DISPONIBLE
       await EspacioModel.actualizarEstado(registro.espacio_id, 'DISPONIBLE');
 
-      // 5. Si hubo cobro monetario, registrar el pago automáticamente
       let pagoId = null;
       if (montoTotal > 0) {
         pagoId = await PagoModel.crear({
@@ -256,9 +248,7 @@ const EstacionamientoController = {
     }
   },
 
-  // ===========================================================================
-  // 3. CONSULTAR HISTORIAL DE PARQUEO
-  // ===========================================================================
+
   obtenerHistorial: async (req, res) => {
     try {
       const historial = await RegistroModel.obtenerTodos();

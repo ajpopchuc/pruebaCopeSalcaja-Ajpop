@@ -1,7 +1,6 @@
 const TipoVehiculoModel = require('../models/tipoVehiculo.model');
 
 const TipoVehiculoController = {
-  // Obtener catálogo de tipos de vehículo (Automovil, Motocicleta)
   obtenerTipos: async (req, res) => {
     try {
       const tipos = await TipoVehiculoModel.obtenerTodos();

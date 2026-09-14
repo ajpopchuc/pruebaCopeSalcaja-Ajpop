@@ -4,7 +4,6 @@ const ClienteModel = require('../models/cliente.model');
 const PagoModel = require('../models/pago.model');
 
 const SuscripcionController = {
-  // 1. Listar catálogo de planes (Básico 30h e Ilimitado)
   obtenerPlanes: async (req, res) => {
     try {
       const planes = await PlanesSuscripcionModel.obtenerTodos();
@@ -22,7 +21,6 @@ const SuscripcionController = {
     }
   },
 
-  // 2. Consultar la suscripción activa de un cliente con su saldo de horas
   obtenerSuscripcionCliente: async (req, res) => {
     try {
       const { clienteId } = req.params;
@@ -40,8 +38,8 @@ const SuscripcionController = {
       res.json({
         status: 'success',
         data: suscripcion || null,
-        message: suscripcion 
-          ? 'Suscripción activa encontrada' 
+        message: suscripcion
+          ? 'Suscripción activa encontrada'
           : 'El cliente no tiene una suscripción activa'
       });
     } catch (error) {
@@ -53,7 +51,6 @@ const SuscripcionController = {
     }
   },
 
-  // 3. Crear / Comprar suscripción para un cliente
   crearSuscripcion: async (req, res) => {
     try {
       const { cliente_id, plan_id } = req.body;

@@ -1,7 +1,6 @@
 const ClienteModel = require('../models/cliente.model');
 
 const ClienteController = {
-  // 1. Listar todos los clientes
   obtenerClientes: async (req, res) => {
     try {
       const clientes = await ClienteModel.obtenerTodos();
@@ -19,7 +18,6 @@ const ClienteController = {
     }
   },
 
-  // 2. Obtener cliente por ID
   obtenerClientePorId: async (req, res) => {
     try {
       const { id } = req.params;
@@ -45,12 +43,10 @@ const ClienteController = {
     }
   },
 
-  // 3. Registrar un nuevo cliente
   crearCliente: async (req, res) => {
     try {
       const { nombre, documento, telefono, email } = req.body;
 
-      // Validación de campos obligatorios
       if (!nombre || !documento) {
         return res.status(400).json({
           status: 'error',
@@ -58,7 +54,6 @@ const ClienteController = {
         });
       }
 
-      // Validar si el documento ya está registrado
       const clienteExistente = await ClienteModel.obtenerPorDocumento(documento.trim());
       if (clienteExistente) {
         return res.status(409).json({

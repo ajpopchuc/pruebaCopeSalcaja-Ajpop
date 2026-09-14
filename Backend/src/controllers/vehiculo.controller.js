@@ -3,7 +3,6 @@ const TipoVehiculoModel = require('../models/tipoVehiculo.model');
 const ClienteModel = require('../models/cliente.model');
 
 const VehiculoController = {
-  // 1. Listar todos los vehículos
   obtenerVehiculos: async (req, res) => {
     try {
       const vehiculos = await VehiculoModel.obtenerTodos();
@@ -21,7 +20,6 @@ const VehiculoController = {
     }
   },
 
-  // 2. Buscar vehículo por placa (vital para la garita de entrada)
   buscarPorPlaca: async (req, res) => {
     try {
       const { placa } = req.params;
@@ -54,7 +52,6 @@ const VehiculoController = {
     }
   },
 
-  // 3. Registrar un vehículo (asociado a cliente o temporal de taller)
   registrarVehiculo: async (req, res) => {
     try {
       const { placa, tipo_vehiculo_id, cliente_id, es_temporal } = req.body;
@@ -107,8 +104,8 @@ const VehiculoController = {
 
       res.status(201).json({
         status: 'success',
-        message: es_temporal 
-          ? 'Vehículo temporal de taller registrado exitosamente' 
+        message: es_temporal
+          ? 'Vehículo temporal de taller registrado exitosamente'
           : 'Vehículo registrado exitosamente',
         data: { vehiculoId }
       });

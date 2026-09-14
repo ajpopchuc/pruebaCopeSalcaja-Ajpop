@@ -1,12 +1,10 @@
 const EspacioModel = require('../models/espacio.model');
 
 const EspacioController = {
-  // 1. Obtener todos los espacios y resumen del estado del parqueo
   obtenerEspacios: async (req, res) => {
     try {
       const espacios = await EspacioModel.obtenerTodos();
 
-      // Cálculo de métricas para el tablero en tiempo real
       const total = espacios.length;
       const disponibles = espacios.filter(e => e.estado === 'DISPONIBLE').length;
       const ocupados = espacios.filter(e => e.estado === 'OCUPADO').length;
@@ -31,7 +29,6 @@ const EspacioController = {
     }
   },
 
-  // 2. Obtener espacios disponibles según el tipo de vehículo (Automovil o Motocicleta)
   obtenerDisponiblesPorTipo: async (req, res) => {
     try {
       const { tipoVehiculoId } = req.params;
@@ -59,7 +56,6 @@ const EspacioController = {
     }
   },
 
-  // 3. Cambiar manualmente el estado de un espacio (ej. enviar a mantenimiento)
   cambiarEstado: async (req, res) => {
     try {
       const { id } = req.params;
