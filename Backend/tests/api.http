@@ -1,0 +1,15 @@
+### Variables de entorno locales
+@baseUrl = http://localhost:3000/api/prestamos
+
+### Listar préstamos
+GET {{baseUrl}}
+
+### Obtener préstamo por ID
+GET {{baseUrl}}/1
+
+### Crear un préstamo
+POST {{baseUrl}}
+Content-Type: application/json
+
+{
+}
