@@ -1,0 +1,372 @@
+/* ==========================================================================
+   ESTILOS GENERALES - MINIMALISTA EN BLANCO, NEGRO Y GRIS
+   ========================================================================== */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #fcfcfc;
+  color: #1a1a1a;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Contenedor principal */
+.app-container {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 32px 20px 60px;
+}
+
+/* Header */
+.app-header {
+  margin-bottom: 28px;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.app-title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  color: #111111;
+}
+
+.app-subtitle {
+  font-size: 13px;
+  color: #666666;
+  font-weight: 400;
+  margin-top: 2px;
+}
+
+/* Navegación - 4 Botones superiores */
+.nav-buttons {
+  display: flex;
+  gap: 8px;
+  background-color: #f0f0f0;
+  padding: 4px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  flex-wrap: wrap;
+}
+
+.nav-btn {
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555555;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+  font-family: inherit;
+}
+
+.nav-btn:hover {
+  color: #111111;
+  background-color: #e5e5e5;
+}
+
+.nav-btn.active {
+  background-color: #111111;
+  color: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenido de vistas */
+.view-container {
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(3px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tarjetas y Paneles */
+.card {
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111111;
+  margin-bottom: 6px;
+}
+
+.card-description {
+  font-size: 13px;
+  color: #666666;
+  margin-bottom: 20px;
+}
+
+/* Métricas Resumen */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.metric-box {
+  background-color: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  padding: 16px 20px;
+}
+
+.metric-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #777777;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 26px;
+  font-weight: 700;
+  color: #111111;
+  margin-top: 4px;
+}
+
+/* Grid de Espacios */
+.espacios-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 12px;
+}
+
+.espacio-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 14px;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.espacio-card.disponible {
+  background-color: #ffffff;
+  border-color: #d1d5db;
+}
+
+.espacio-card.ocupado {
+  background-color: #18181b;
+  color: #ffffff;
+  border-color: #18181b;
+}
+
+.espacio-card.mantenimiento {
+  background-color: #f4f4f5;
+  border-color: #e4e4e7;
+  color: #71717a;
+}
+
+.espacio-codigo {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.espacio-tipo {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  opacity: 0.8;
+}
+
+.espacio-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+
+.espacio-card.disponible .espacio-badge {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+}
+
+.espacio-card.ocupado .espacio-badge {
+  background-color: #27272a;
+  color: #f4f4f5;
+}
+
+.espacio-card.mantenimiento .espacio-badge {
+  background-color: #e4e4e7;
+  color: #52525b;
+}
+
+/* Formularios */
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 500;
+  color: #333333;
+}
+
+.form-input,
+.form-select {
+  padding: 9px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #111111;
+  background-color: #ffffff;
+  outline: none;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+  border-color: #111111;
+  box-shadow: 0 0 0 1px #111111;
+}
+
+.form-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #333333;
+  margin-top: 10px;
+  cursor: pointer;
+}
+
+/* Botones */
+.btn-primary {
+  background-color: #111111;
+  color: #ffffff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+  font-family: inherit;
+}
+
+.btn-primary:hover {
+  background-color: #333333;
+}
+
+.btn-primary:disabled {
+  background-color: #999999;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: #f3f4f6;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-secondary:hover {
+  background-color: #e5e7eb;
+}
+
+/* Alertas y Mensajes */
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.alert-success {
+  background-color: #f4fbf7;
+  color: #166534;
+  border: 1px solid #bbf7d0;
+}
+
+.alert-error {
+  background-color: #fef2f2;
+  color: #991b1b;
+  border: 1px solid #fecaca;
+}
+
+.alert-info {
+  background-color: #f8fafc;
+  color: #334155;
+  border: 1px solid #e2e8f0;
+}
+
+/* Ticket de Liquidación / Recibo */
+.ticket-receipt {
+  background-color: #fafafa;
+  border: 1px dashed #cccccc;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.ticket-receipt-title {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e5e5e5;
+  padding-bottom: 8px;
+}
+
+.ticket-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #444444;
+}
+
+.ticket-total {
+  font-size: 16px;
+  font-weight: 700;
+  color: #111111;
+  border-top: 1px solid #dddddd;
+  padding-top: 8px;
+  margin-top: 10px;
+}

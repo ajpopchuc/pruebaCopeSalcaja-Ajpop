@@ -1,17 +1,50 @@
-import { usePrestamos } from './features/prestamos/hooks/usePrestamos';
-import { TablaPrestamos } from './features/prestamos/components/TablaPrestamos';
+import React, { useState } from 'react';
+import { Navbar } from './components/Navbar';
+import { TableroEspacios } from './components/TableroEspacios';
+import { EntradaVehiculo } from './components/EntradaVehiculo';
+import { SalidaVehiculo } from './components/SalidaVehiculo';
+import { RegistroClienteVehiculo } from './components/RegistroClienteVehiculo';
 
 export const App = () => {
-  const { data: prestamos, loading, error } = usePrestamos();
+  const [tabActivo, setTabActivo] = useState('tablero');
+  const [refreshKey, setRefreshKey] = useState(0);
 
-  if (loading) return <p>Cargando información...</p>;
-  if (error) return <p>Error al cargar préstamos: {error.message}</p>;
+  const forzarRecarga = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   return (
-    <main>
-      <h1>Gestión de Préstamos</h1>
-      <TablaPrestamos prestamos={prestamos} />
-    </main>
+    <div className="app-container">
+      {/* Header Principal */}
+      <header className="app-header">
+        <div>
+          <h1 className="app-title">Control de Parqueadero</h1>
+          <p className="app-subtitle">Gestión de estancias, suscripciones y liquidación de tarifas</p>
+        </div>
+
+        {/* 4 Botones de Selección */}
+        <Navbar tabActivo={tabActivo} setTabActivo={setTabActivo} />
+      </header>
+
+      {/* Vistas Principales */}
+      <main>
+        {tabActivo === 'tablero' && (
+          <TableroEspacios key={refreshKey} />
+        )}
+
+        {tabActivo === 'entrada' && (
+          <EntradaVehiculo onEntradaExitosa={forzarRecarga} />
+        )}
+
+        {tabActivo === 'salida' && (
+          <SalidaVehiculo onSalidaExitosa={forzarRecarga} />
+        )}
+
+        {tabActivo === 'registro' && (
+          <RegistroClienteVehiculo />
+        )}
+      </main>
+    </div>
   );
 };
 
