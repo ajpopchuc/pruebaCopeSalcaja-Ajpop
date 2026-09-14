@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
-const prestamosRoutes = require('./src/routes/prestamos.routes');
+const apiRoutes = require('./src/routes');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -16,13 +16,13 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/', (req, res) => {
   res.json({
     status: 'success',
-    message: 'Servidor backend corriendo correctamente',
+    message: 'Servidor del Sistema de Parqueadero corriendo correctamente',
     timestamp: new Date()
   });
 });
 
-// Rutas de módulos
-app.use('/api/prestamos', prestamosRoutes);
+// Rutas del API
+app.use('/api', apiRoutes);
 
 // Manejo de rutas no encontradas (404)
 app.use((req, res) => {
