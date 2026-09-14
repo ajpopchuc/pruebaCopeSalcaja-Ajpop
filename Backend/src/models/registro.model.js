@@ -57,9 +57,17 @@ const RegistroModel = {
   // 6. Listar historial de registros
   obtenerTodos: async () => {
     const [rows] = await pool.query(`
-      SELECT r.*, v.placa, e.codigo_espacio 
+      SELECT 
+        r.*, 
+        v.placa, 
+        tv.tipo AS tipo_vehiculo_nombre,
+        c.nombre AS cliente_nombre,
+        e.codigo_espacio,
+        TIMESTAMPDIFF(MINUTE, r.fecha_entrada, IFNULL(r.fecha_salida, NOW())) AS minutos_estancia
       FROM registros_estacionamiento r 
       JOIN vehiculo v ON r.vehiculo_id = v.id 
+      JOIN tipo_vehiculo tv ON v.tipo_vehiculo_id = tv.id
+      LEFT JOIN cliente c ON v.cliente_id = c.id
       JOIN espacio e ON r.espacio_id = e.id 
       ORDER BY r.fecha_entrada DESC
     `);

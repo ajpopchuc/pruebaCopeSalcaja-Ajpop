@@ -5,7 +5,8 @@ export const Navbar = ({ tabActivo, setTabActivo }) => {
     { id: 'tablero', label: '1. Estado del Parqueo' },
     { id: 'entrada', label: '2. Registrar Entrada' },
     { id: 'salida', label: '3. Salida y Cobro' },
-    { id: 'registro', label: '4. Clientes y Vehículos' }
+    { id: 'historial', label: '4. Historial y Consumos' },
+    { id: 'registro', label: '5. Clientes y Vehículos' }
   ];
 
   return (

@@ -3,6 +3,7 @@ import { Navbar } from './components/Navbar';
 import { TableroEspacios } from './components/TableroEspacios';
 import { EntradaVehiculo } from './components/EntradaVehiculo';
 import { SalidaVehiculo } from './components/SalidaVehiculo';
+import { HistorialConsumos } from './components/HistorialConsumos';
 import { RegistroClienteVehiculo } from './components/RegistroClienteVehiculo';
 
 export const App = () => {
@@ -22,7 +23,7 @@ export const App = () => {
           <p className="app-subtitle">Gestión de estancias, suscripciones y liquidación de tarifas</p>
         </div>
 
-        {/* 4 Botones de Selección */}
+        {/* Botones de Selección */}
         <Navbar tabActivo={tabActivo} setTabActivo={setTabActivo} />
       </header>
 
@@ -38,6 +39,10 @@ export const App = () => {
 
         {tabActivo === 'salida' && (
           <SalidaVehiculo onSalidaExitosa={forzarRecarga} />
+        )}
+
+        {tabActivo === 'historial' && (
+          <HistorialConsumos key={refreshKey} />
         )}
 
         {tabActivo === 'registro' && (
