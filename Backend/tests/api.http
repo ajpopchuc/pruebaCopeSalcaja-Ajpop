@@ -1,15 +1,194 @@
-### Variables de entorno locales
-@baseUrl = http://localhost:3000/api/prestamos
+### ====================================================================
+### PRUEBAS DE ENDPOINTS - SISTEMA DE GESTIÓN DE PARQUEADERO
+### Compatible con la extensión "REST Client" de VS Code o IntelliJ
+### ====================================================================
 
-### Listar préstamos
-GET {{baseUrl}}
+@baseUrl = http://localhost:3000/api
+@contentType = application/json
 
-### Obtener préstamo por ID
-GET {{baseUrl}}/1
+### ====================================================================
+### 1. ESTADO DEL PARQUEO Y ESPACIOS
+### ====================================================================
 
-### Crear un préstamo
-POST {{baseUrl}}
-Content-Type: application/json
+### 1.1 Obtener todos los espacios (Disponibles, Ocupados y contadores)
+GET {{baseUrl}}/espacios
+
+### 1.2 Obtener espacios disponibles para AUTOMÓVIL (tipo_vehiculo_id = 1)
+GET {{baseUrl}}/espacios/disponibles/1
+
+### 1.3 Obtener espacios disponibles para MOTOCICLETA (tipo_vehiculo_id = 2)
+GET {{baseUrl}}/espacios/disponibles/2
+
+
+### ====================================================================
+### 2. TARIFAS Y PLANES DE SUSCRIPCIÓN
+### ====================================================================
+
+### 2.1 Consultar tarifas vigentes por hora para cada tipo de vehículo
+GET {{baseUrl}}/tarifas
+
+### 2.2 Consultar planes de suscripción disponibles (Básico, Ilimitado, etc.)
+GET {{baseUrl}}/suscripciones/planes
+
+
+### ====================================================================
+### 3. CLIENTES Y VEHÍCULOS
+### ====================================================================
+
+### 3.1 Listar todos los clientes registrados
+GET {{baseUrl}}/clientes
+
+### 3.2 Crear un nuevo cliente
+POST {{baseUrl}}/clientes
+Content-Type: {{contentType}}
 
 {
+  "nombre": "Fernando López",
+  "documento": "1234567890101",
+  "telefono": "5555-1234",
+  "email": "fernando.lopez@example.com"
 }
+
+### 3.3 Listar todos los vehículos registrados
+GET {{baseUrl}}/vehiculos
+
+### 3.4 Buscar un vehículo por su placa
+GET {{baseUrl}}/vehiculos/buscar/P101AAA
+
+### 3.5 Registrar un vehículo nuevo (vehículo regular o temporal de taller)
+POST {{baseUrl}}/vehiculos
+Content-Type: {{contentType}}
+
+{
+  "placa": "P999ZZZ",
+  "tipo_vehiculo_id": 1,
+  "cliente_id": 1,
+  "es_temporal": false
+}
+
+
+### ====================================================================
+### 4. SUSCRIPCIONES Y BOLSA DE HORAS
+### ====================================================================
+
+### 4.1 Consultar suscripción activa y saldo de horas de un cliente (ej. Cliente ID: 1)
+GET {{baseUrl}}/suscripciones/cliente/1
+
+### 4.2 Asignar / Contratar una nueva suscripción para un cliente
+POST {{baseUrl}}/suscripciones
+Content-Type: {{contentType}}
+
+{
+  "cliente_id": 5,
+  "plan_id": 1
+}
+
+
+### ====================================================================
+### 5. REGISTRO DE ENTRADAS AL PARQUEO (OPERACIÓN Y VALIDACIONES CLAVE)
+### ====================================================================
+
+### 5.1 [ÉXITO] Entrada de vehículo rotativo en espacio disponible compatible
+POST {{baseUrl}}/estacionamiento/entrada
+Content-Type: {{contentType}}
+
+{
+  "placa": "P777NEW",
+  "tipo_vehiculo_id": 1,
+  "espacio_id": 1,
+  "cliente_id": null
+}
+
+### 5.2 [ÉXITO] Entrada de vehículo con suscripción activa (descuenta de bolsa de horas)
+POST {{baseUrl}}/estacionamiento/entrada
+Content-Type: {{contentType}}
+
+{
+  "placa": "P202BBB",
+  "tipo_vehiculo_id": 1,
+  "espacio_id": 4,
+  "cliente_id": 1
+}
+
+### 5.3 [ÉXITO] Entrada de vehículo temporal por taller (asociado a cliente suscrito)
+POST {{baseUrl}}/estacionamiento/entrada
+Content-Type: {{contentType}}
+
+{
+  "placa": "P909TMP",
+  "tipo_vehiculo_id": 1,
+  "espacio_id": 5,
+  "cliente_id": 1
+}
+
+### 5.4 [VALIDACIÓN CLAVE - ANTI-PASSBACK] Intento de reingresar vehículo que ya está adentro
+# Debe responder HTTP 400 con mensaje: "El vehículo ya tiene una estancia activa dentro del parqueo"
+POST {{baseUrl}}/estacionamiento/entrada
+Content-Type: {{contentType}}
+
+{
+  "placa": "P101AAA",
+  "tipo_vehiculo_id": 1,
+  "espacio_id": 1,
+  "cliente_id": null
+}
+
+### 5.5 [VALIDACIÓN CLAVE - ESPACIO OCUPADO] Intento de asignar un espacio que ya está en uso
+# Debe responder HTTP 400 con mensaje: "El espacio seleccionado no está disponible"
+POST {{baseUrl}}/estacionamiento/entrada
+Content-Type: {{contentType}}
+
+{
+  "placa": "P888XYZ",
+  "tipo_vehiculo_id": 1,
+  "espacio_id": 2,
+  "cliente_id": null
+}
+
+### 5.6 [VALIDACIÓN CLAVE - INCOMPATIBILIDAD] Intento de meter automóvil (tipo 1) en espacio de moto (espacio 9 / tipo 2)
+# Debe responder HTTP 400 con mensaje: "El espacio no es compatible con el tipo de vehículo"
+POST {{baseUrl}}/estacionamiento/entrada
+Content-Type: {{contentType}}
+
+{
+  "placa": "P888XYZ",
+  "tipo_vehiculo_id": 1,
+  "espacio_id": 9,
+  "cliente_id": null
+}
+
+
+### ====================================================================
+### 6. REGISTRO DE SALIDAS, COBRO Y CONSUMO
+### ====================================================================
+
+### 6.1 Registrar salida y liquidación de ticket activo (ej. Registro ID: 1)
+# Calcula estancia, aplica tarifa por hora/fracción o deduce horas de suscripción
+POST {{baseUrl}}/estacionamiento/salida
+Content-Type: {{contentType}}
+
+{
+  "registro_id": 1
+}
+
+### 6.2 Registrar salida de vehículo con suscripción (ej. Registro ID: 2)
+POST {{baseUrl}}/estacionamiento/salida
+Content-Type: {{contentType}}
+
+{
+  "registro_id": 2
+}
+
+
+### ====================================================================
+### 7. HISTORIAL DE CONSUMOS, MOVIMIENTOS Y PAGOS
+### ====================================================================
+
+### 7.1 Consultar historial completo de entradas, salidas, minutos y montos liquidados
+GET {{baseUrl}}/estacionamiento/historial
+
+### 7.2 Consultar todos los comprobantes de pago generados
+GET {{baseUrl}}/pagos
+
+### 7.3 Consultar un pago específico por ID (ej. ID: 1)
+GET {{baseUrl}}/pagos/1
