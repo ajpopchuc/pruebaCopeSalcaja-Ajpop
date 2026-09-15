@@ -4,6 +4,7 @@ import api from '../config/api';
 export const TableroEspacios = () => {
   const [espacios, setEspacios] = useState([]);
   const [resumen, setResumen] = useState({ total: 0, disponibles: 0, ocupados: 0, mantenimiento: 0 });
+  const [filtroTipo, setFiltroTipo] = useState('TODOS');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -28,6 +29,13 @@ export const TableroEspacios = () => {
     cargarEspacios();
   }, []);
 
+  // Filtrado reactivo por tipo de vehículo
+  const espaciosFiltrados = espacios.filter(esp => {
+    if (filtroTipo === 'AUTO') return esp.tipo_vehiculo_id === 1;
+    if (filtroTipo === 'MOTO') return esp.tipo_vehiculo_id === 2;
+    return true;
+  });
+
   return (
     <div className="view-container">
       {/* 1. Métricas de Ocupación */}
@@ -38,39 +46,67 @@ export const TableroEspacios = () => {
         </div>
         <div className="metric-box">
           <span className="metric-label">Disponibles</span>
-          <p className="metric-value" style={{ color: '#166534' }}>{resumen.disponibles}</p>
+          <p className="metric-value">{resumen.disponibles}</p>
         </div>
         <div className="metric-box">
           <span className="metric-label">Ocupados</span>
-          <p className="metric-value" style={{ color: '#991b1b' }}>{resumen.ocupados}</p>
+          <p className="metric-value">{resumen.ocupados}</p>
         </div>
         <div className="metric-box">
           <span className="metric-label">Mantenimiento</span>
-          <p className="metric-value" style={{ color: '#854d0e' }}>{resumen.mantenimiento}</p>
+          <p className="metric-value">{resumen.mantenimiento}</p>
         </div>
       </div>
 
       {/* 2. Grid de Espacios Individuales */}
       <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div className="card-header-flex">
           <div>
-            <h2 className="card-title">Distribución de Espacios</h2>
+            <h2 className="card-title">Distribución y Estado de Espacios</h2>
             <p className="card-description" style={{ marginBottom: 0 }}>
-              Cajones físicos clasificados para Automóvil o Motocicleta.
+              Cajones físicos clasificados por compatibilidad de vehículo.
             </p>
           </div>
-          <button className="btn-secondary" onClick={cargarEspacios}>
-            Actualizar
-          </button>
+
+          <div className="card-actions-flex">
+            {/* Filtro minimalista por tipo */}
+            <div className="filter-group">
+              <button 
+                type="button" 
+                className={`filter-btn ${filtroTipo === 'TODOS' ? 'active' : ''}`}
+                onClick={() => setFiltroTipo('TODOS')}
+              >
+                Todos ({espacios.length})
+              </button>
+              <button 
+                type="button" 
+                className={`filter-btn ${filtroTipo === 'AUTO' ? 'active' : ''}`}
+                onClick={() => setFiltroTipo('AUTO')}
+              >
+                Autos ({espacios.filter(e => e.tipo_vehiculo_id === 1).length})
+              </button>
+              <button 
+                type="button" 
+                className={`filter-btn ${filtroTipo === 'MOTO' ? 'active' : ''}`}
+                onClick={() => setFiltroTipo('MOTO')}
+              >
+                Motos ({espacios.filter(e => e.tipo_vehiculo_id === 2).length})
+              </button>
+            </div>
+
+            <button className="btn-secondary" onClick={cargarEspacios}>
+              Actualizar
+            </button>
+          </div>
         </div>
 
         {error && <div className="alert alert-error">{error}</div>}
 
         {loading ? (
-          <p style={{ color: '#666666', fontSize: 13 }}>Cargando disponibilidad...</p>
+          <p style={{ color: '#666666', fontSize: 13, padding: '20px 0' }}>Cargando disponibilidad...</p>
         ) : (
           <div className="espacios-grid">
-            {espacios.map(esp => (
+            {espaciosFiltrados.map(esp => (
               <div 
                 key={esp.id} 
                 className={`espacio-card ${esp.estado.toLowerCase()}`}

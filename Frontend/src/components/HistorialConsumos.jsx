@@ -3,6 +3,8 @@ import api from '../config/api';
 
 export const HistorialConsumos = () => {
   const [historial, setHistorial] = useState([]);
+  const [busqueda, setBusqueda] = useState('');
+  const [filtroEstado, setFiltroEstado] = useState('TODOS');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -26,7 +28,6 @@ export const HistorialConsumos = () => {
     cargarHistorial();
   }, []);
 
-  // Formateador de fecha/hora simple y legible
   const formatearFecha = (fechaStr) => {
     if (!fechaStr) return '--';
     const d = new Date(fechaStr);
@@ -41,7 +42,22 @@ export const HistorialConsumos = () => {
   // Métricas rápidas
   const totalMovimientos = historial.length;
   const activosAdentro = historial.filter(h => h.estado === 'ACTIVO').length;
+  const finalizados = historial.filter(h => h.estado === 'FINALIZADO').length;
   const totalRecaudado = historial.reduce((acc, h) => acc + Number(h.monto_total || 0), 0);
+
+  // Filtrado reactivo por texto y estado
+  const registrosFiltrados = historial.filter(reg => {
+    const coincideEstado = 
+      filtroEstado === 'TODOS' ? true : reg.estado === filtroEstado;
+
+    const termino = busqueda.trim().toUpperCase();
+    const coincideTexto = !termino || 
+      reg.placa.toUpperCase().includes(termino) ||
+      (reg.cliente_nombre && reg.cliente_nombre.toUpperCase().includes(termino)) ||
+      reg.codigo_espacio.toUpperCase().includes(termino);
+
+    return coincideEstado && coincideTexto;
+  });
 
   return (
     <div className="view-container">
@@ -53,11 +69,11 @@ export const HistorialConsumos = () => {
         </div>
         <div className="metric-box">
           <span className="metric-label">Vehículos Adentro</span>
-          <p className="metric-value" style={{ color: '#111111' }}>{activosAdentro}</p>
+          <p className="metric-value">{activosAdentro}</p>
         </div>
         <div className="metric-box">
           <span className="metric-label">Recaudación Total</span>
-          <p className="metric-value" style={{ color: '#166534' }}>
+          <p className="metric-value">
             Q {totalRecaudado.toFixed(2)}
           </p>
         </div>
@@ -65,11 +81,11 @@ export const HistorialConsumos = () => {
 
       {/* Tabla de Entradas, Salidas y Consumos */}
       <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <div className="card-header-flex">
           <div>
             <h2 className="card-title">Registro de Entradas, Salidas y Consumos</h2>
             <p className="card-description" style={{ marginBottom: 0 }}>
-              Consulta detallada de permanencia, recargos y montos cobrados por vehículo.
+              Consulta detallada de permanencia, recargos y montos liquidados por vehículo.
             </p>
           </div>
           <button className="btn-secondary" onClick={cargarHistorial}>
@@ -77,12 +93,50 @@ export const HistorialConsumos = () => {
           </button>
         </div>
 
+        {/* Barra de Filtros y Búsqueda */}
+        <div className="search-filter-bar">
+          <input
+            type="text"
+            className="form-input"
+            style={{ maxWidth: 280 }}
+            placeholder="Buscar por placa, cliente o espacio..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+          />
+
+          <div className="filter-group">
+            <button
+              type="button"
+              className={`filter-btn ${filtroEstado === 'TODOS' ? 'active' : ''}`}
+              onClick={() => setFiltroEstado('TODOS')}
+            >
+              Todos ({totalMovimientos})
+            </button>
+            <button
+              type="button"
+              className={`filter-btn ${filtroEstado === 'ACTIVO' ? 'active' : ''}`}
+              onClick={() => setFiltroEstado('ACTIVO')}
+            >
+              En Parqueo ({activosAdentro})
+            </button>
+            <button
+              type="button"
+              className={`filter-btn ${filtroEstado === 'FINALIZADO' ? 'active' : ''}`}
+              onClick={() => setFiltroEstado('FINALIZADO')}
+            >
+              Finalizados ({finalizados})
+            </button>
+          </div>
+        </div>
+
         {error && <div className="alert alert-error">{error}</div>}
 
         {loading ? (
-          <p style={{ color: '#666666', fontSize: 13 }}>Cargando registros...</p>
-        ) : historial.length === 0 ? (
-          <p style={{ color: '#666666', fontSize: 13 }}>No hay registros de movimientos aún.</p>
+          <p style={{ color: '#666666', fontSize: 13, padding: '20px 0' }}>Cargando registros...</p>
+        ) : registrosFiltrados.length === 0 ? (
+          <p style={{ color: '#666666', fontSize: 13, padding: '20px 0' }}>
+            No se encontraron registros con los filtros seleccionados.
+          </p>
         ) : (
           <div className="table-responsive">
             <table className="data-table">
@@ -100,14 +154,14 @@ export const HistorialConsumos = () => {
                 </tr>
               </thead>
               <tbody>
-                {historial.map((reg) => (
+                {registrosFiltrados.map((reg) => (
                   <tr key={reg.id}>
                     <td><strong>{reg.placa}</strong></td>
                     <td>{reg.tipo_vehiculo_nombre}</td>
                     <td>Espacio {reg.codigo_espacio}</td>
                     <td>
                       {reg.cliente_nombre ? (
-                        <span title="Cliente con suscripción">{reg.cliente_nombre}</span>
+                        <span>{reg.cliente_nombre}</span>
                       ) : (
                         <span style={{ color: '#888888' }}>Rotativo</span>
                       )}
@@ -115,7 +169,7 @@ export const HistorialConsumos = () => {
                     <td>{formatearFecha(reg.fecha_entrada)}</td>
                     <td>
                       {reg.estado === 'ACTIVO' ? (
-                        <span style={{ color: '#166534', fontWeight: 500 }}>En parqueo</span>
+                        <span style={{ fontWeight: 600 }}>En parqueo</span>
                       ) : (
                         formatearFecha(reg.fecha_salida)
                       )}
