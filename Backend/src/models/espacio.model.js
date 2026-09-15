@@ -1,7 +1,6 @@
 const pool = require('../config/db');
 
 const EspacioModel = {
-  // 1. Mostrar estado del parqueo (Disponibles, Ocupados y estado individual)
   obtenerTodos: async () => {
     const [rows] = await pool.query(`
       SELECT e.*, tv.tipo AS tipo_vehiculo_nombre 
@@ -17,7 +16,6 @@ const EspacioModel = {
     return rows[0] || null;
   },
 
-  // 2. Buscar espacios libres compatibles para un tipo de vehículo (Automovil o Motocicleta)
   obtenerDisponiblesPorTipo: async (tipoVehiculoId) => {
     const [rows] = await pool.query(`
       SELECT * FROM espacio 
@@ -27,7 +25,6 @@ const EspacioModel = {
     return rows;
   },
 
-  // 3. Actualizar estado a OCUPADO o DISPONIBLE
   actualizarEstado: async (id, estado) => {
     const [result] = await pool.query(
       'UPDATE espacio SET estado = ? WHERE id = ?',
